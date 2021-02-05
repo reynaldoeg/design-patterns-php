@@ -4,9 +4,13 @@
 namespace Styde\Strategy\Tests;
 
 use Styde\Strategy\Mailer;
+use Styde\Strategy\FileTransport;
+use Styde\Strategy\SmtpTransport;
+use Styde\Strategy\ArrayTransport;
 use StephaneCoinon\Mailtrap\Inbox;
 use StephaneCoinon\Mailtrap\Client;
 use StephaneCoinon\Mailtrap\Model;
+use Styde\Strategy\Transport;
 
 /**
  * Class MailerTest
@@ -18,7 +22,7 @@ class MailerTest extends TestCase
     //* @test */
     function test_it_stores_the_sent_email_in_an_array()
     {
-        $mailer = new Mailer('array');
+        $mailer = new Mailer($transport = new ArrayTransport());
         $mailer->setSender('reynaldoegesparza@gmail.com');
 
         $mailer->send(
@@ -27,7 +31,7 @@ class MailerTest extends TestCase
             'The content of the message'
         );
 
-        $sent = $mailer->sent();
+        $sent = $transport->sent();
 
         $this->assertCount(1, $sent);
         $this->assertSame('reynaldoeg_esparza@hotmail.com', $sent[0]['recipient']);
@@ -41,10 +45,10 @@ class MailerTest extends TestCase
         $filename = __DIR__.'/../storage/test.txt';
         @unlink($filename);
 
-        $mailer = new Mailer('file');
+
+        $mailer = new Mailer(new FileTransport($filename));
         $mailer->setSender('reynaldoegesparza@gmail.com');
 
-        $mailer->setFilename($filename);
         $mailer->send(
             'reynaldoeg_esparza@hotmail.com',
             'An example message',
@@ -75,11 +79,7 @@ class MailerTest extends TestCase
 
         // - When / Act
 
-        $mailer = new Mailer('smtp');
-        $mailer->setHost('smtp.mailtrap.io');
-        $mailer->setUsername('c4fe0d17fb3ca7');
-        $mailer->setPassword('a6e7d16cb434ab');
-        $mailer->setPort('25');
+        $mailer = new Mailer(new SmtpTransport('smtp.mailtrap.io', 'c4fe0d17fb3ca7', 'a6e7d16cb434ab', '25'));
         $mailer->setSender('reynaldoegesparza@gmail.com');
 
         $sent = $mailer->send(
