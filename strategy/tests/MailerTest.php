@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Styde\Strategy\Tests;
 
 use Styde\Strategy\Mailer;
@@ -10,7 +9,6 @@ use Styde\Strategy\ArrayTransport;
 use StephaneCoinon\Mailtrap\Inbox;
 use StephaneCoinon\Mailtrap\Client;
 use StephaneCoinon\Mailtrap\Model;
-use Styde\Strategy\Transport;
 
 /**
  * Class MailerTest
